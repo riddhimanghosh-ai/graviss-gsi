@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { BarChart3, Boxes, BrainCircuit, ChartScatter, FlaskConical, Home, PackageSearch, Route, Tags, TrendingUp } from "lucide-react";
+import { BarChart3, Boxes, BrainCircuit, ChartScatter, FlaskConical, Home, PackageSearch, Route, Tags, TrendingUp, Zap } from "lucide-react";
 
 const items = [
   ["/dashboard", "Command Center", Home],
   ["/rm-inventory", "RM Inventory", FlaskConical],
+  ["/scenarios", "Scenario Planning", Zap],
   ["/forecast", "Forecast", TrendingUp],
   ["/inventory", "Inventory", Boxes],
   ["/sales", "Sales", BarChart3],

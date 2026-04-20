@@ -5,57 +5,31 @@ import IngredientMatrixTable from "@/components/rmInventory/IngredientMatrixTabl
 import RMDepletionWaterfall from "@/components/charts/RMDepletionWaterfall";
 import PurchaseOrderModal from "@/components/rmInventory/PurchaseOrderModal";
 import { rmIngredients } from "@/constants/rmIngredients";
+import { useProcurementOptimizer } from "@/hooks/useProcurementOptimizer";
 import type { PurchaseOrderLineItem } from "@/types/rmInventory";
-
-const SUPPLIERS: Record<string, string> = {
-  "milk-fat": "Parag Milk Foods",
-  smp: "Gujarat Co-op Milk",
-  "fresh-cream": "Amul Dairy",
-  sugar: "Shree Renuka Sugars",
-  stabilizer: "Kerry Ingredients India",
-  "flavor-compounds": "Givaudan India",
-};
-
-const LEAD_DAYS: Record<string, number> = {
-  "milk-fat": 5,
-  smp: 7,
-  "fresh-cream": 2,
-  sugar: 10,
-  stabilizer: 14,
-  "flavor-compounds": 21,
-};
-
-function buildPOLineItems(): PurchaseOrderLineItem[] {
-  return rmIngredients
-    .filter((ing) => ing.currentStockKg < ing.forecastedDemandLiters * 1.1)
-    .map((ing) => {
-      const qty = Math.round(ing.forecastedDemandLiters * 1.3 - ing.currentStockKg);
-      const total = qty * ing.costPerKg;
-      return {
-        ingredientId: ing.id,
-        ingredientName: ing.name,
-        quantityKg: qty,
-        unitCostInr: ing.costPerKg,
-        totalCostInr: total,
-        suggestedSupplier: SUPPLIERS[ing.id] ?? "TBD",
-        deliveryLeadDays: LEAD_DAYS[ing.id] ?? 7,
-        urgency: ing.currentStockKg < ing.forecastedDemandLiters * 0.8 ? "critical" : "planned",
-      };
-    });
-}
 
 export default function RMInventoryPage() {
   const [selectedId, setSelectedId] = useState("milk-fat");
   const [isPOOpen, setIsPOOpen] = useState(false);
 
   const selectedIngredient = rmIngredients.find((i) => i.id === selectedId) ?? rmIngredients[0];
-  const poLineItems = buildPOLineItems();
+  const procurementDecisions = useProcurementOptimizer();
+
+  // Convert ProcurementDecision to PurchaseOrderLineItem for modal compatibility
+  const poLineItems: PurchaseOrderLineItem[] = procurementDecisions.map((dec: any) => ({
+    ingredientId: dec.ingredientId,
+    ingredientName: dec.ingredientName,
+    quantityKg: dec.recommendedQty,
+    unitCostInr: dec.unitCost,
+    totalCostInr: dec.totalCostInr,
+    suggestedSupplier: dec.supplier.name,
+    deliveryLeadDays: dec.supplier.leadDays,
+    urgency: dec.stockoutRisk > 50 ? "critical" : "planned",
+  }));
 
   const totalRMValueInr = rmIngredients.reduce((sum, ing) => sum + ing.currentStockKg * ing.costPerKg, 0);
   const expiryRiskInr = rmIngredients.reduce((sum, ing) => sum + ing.expiringSoonKg * ing.costPerKg, 0);
-  const shortfallCount = rmIngredients.filter((ing) => ing.currentStockKg < ing.forecastedDemandLiters * 0.8).length;
-
-  return (
+  const shortfallCount = rmIngredients.filter((ing) => ing.currentStockKg < ing.forecastedDemandLiters * 0.8).length;  return (
     <div className="space-y-6">
       {/* KPI row */}
       <section className="grid gap-4 md:grid-cols-3">

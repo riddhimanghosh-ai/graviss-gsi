@@ -7,3 +7,6 @@ export * from "./weather";
 export * from "./alert";
 export * from "./chatbot";
 export * from "./rmInventory";
+
+// Procurement types
+export * from "./procurement";

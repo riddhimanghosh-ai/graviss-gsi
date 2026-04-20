@@ -10,6 +10,7 @@ import SupplyChainPage from "@/pages/SupplyChainPage";
 import AIInsightsPage from "@/pages/AIInsightsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import RMInventoryPage from "@/pages/RMInventoryPage";
+import ScenarioPage from "@/pages/ScenarioPage";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/supply-chain" element={<SupplyChainPage />} />
         <Route path="/ai-insights" element={<AIInsightsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/scenarios" element={<ScenarioPage />} />
       </Routes>
     </AppShell>
   );

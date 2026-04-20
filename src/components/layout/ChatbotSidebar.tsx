@@ -49,7 +49,7 @@ export default function ChatbotSidebar() {
       <div className="flex h-[calc(100%-148px)] flex-col gap-3 overflow-auto p-5">
         {messages.length === 0 && (
           <div className="rounded-2xl bg-surface px-4 py-3 text-sm text-brown">
-            Hi! I'm ScoopBot. Ask me about stockouts, raw material prices, cold-chain breaches, demand forecasts, or procurement decisions.
+            Hi! I'm ScoopBot. Ask about procurement (EOQ, suppliers, bulk discounts), stockouts, cold-chain, demand, pricing, or RM optimization...
           </div>
         )}
         {messages.map((message) => (
